@@ -1,0 +1,10 @@
+# Python
+__pycache__/
+*.pyc
+
+# Isaac Sim / simulation output
+output/
+*.usd.log
+
+# Editor/agent settings
+.claude/
