@@ -3,7 +3,7 @@
 Isaac Sim standalone 6.0.1에서 Indy7 + Robotiq 2F-140, YCB object spawn,
 PINK IK, wrist camera capture를 실행하는 최소 워크스페이스다.
 
-Repo: https://github.com/CheolMin-Yoon/isaac_indy7v2
+Repo: https://github.com/CheolMin-Yoon/isaac_indy7
 
 > 새 세션에서 이어받을 때는 [`docs/handoff.md`](docs/handoff.md)를 먼저 확인한다.
 > 자산/IK 계약은 [`docs/design/`](docs/design/)가 정본이다.

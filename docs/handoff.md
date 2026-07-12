@@ -13,7 +13,7 @@
   현재 워크스페이스는 Indy7 단일 경로 — 스폰/IK/그리퍼/YCB/카메라 단계다.
 - 루트 실행 파일은 `indy7.py` 하나다. 재사용 코드는 `source/isaac_indy7/`,
   USD 자산은 `source/assets/` 아래에 둔다.
-- Repo: https://github.com/CheolMin-Yoon/isaac_indy7v2
+- Repo: https://github.com/CheolMin-Yoon/isaac_indy7
 - FFW(AI Worker BG2/SG2/SH5) USD들은 이 워크스페이스 소속이 아니다 —
   `~/gs_rl/source/assets/ffw/`로 옮겨졌다(Genesis 기반 워크스페이스, 2026-07-12).
   isaac_indy7는 Indy7 전용으로 유지한다.
