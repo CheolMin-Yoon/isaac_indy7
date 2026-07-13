@@ -6,13 +6,31 @@ import numpy as np
 
 
 def spawn_indy7(usd_path: str, prim_path: str, position):
-    """Add an Indy7 USD reference and wrap it as a SingleArticulation."""
+    """Add an Indy7 USD reference and wrap it as a SingleArticulation.
+
+    The combined asset USDs (gripper/camera variants) nest the actual
+    ArticulationRootAPI prim one or more levels below their defaultPrim, so
+    ``prim_path`` itself is never the articulation root after referencing —
+    the root is found by scanning the referenced subtree instead of assuming
+    it sits exactly at ``prim_path``.
+    """
+    from pxr import Usd, UsdPhysics
+
     from isaacsim.core.prims import SingleArticulation
-    from isaacsim.core.utils.stage import add_reference_to_stage
+    from isaacsim.core.utils.stage import add_reference_to_stage, get_current_stage
 
     add_reference_to_stage(usd_path=usd_path, prim_path=prim_path)
+    stage = get_current_stage()
+    root_prim = stage.GetPrimAtPath(prim_path)
+    articulation_prim = next(
+        (p for p in Usd.PrimRange(root_prim) if p.HasAPI(UsdPhysics.ArticulationRootAPI)),
+        None,
+    )
+    if articulation_prim is None:
+        raise RuntimeError(f"No ArticulationRootAPI prim found under {prim_path} in {usd_path}")
+
     return SingleArticulation(
-        prim_path=prim_path,
+        prim_path=str(articulation_prim.GetPath()),
         name="indy7",
         position=np.asarray(position, dtype=float),
     )
@@ -46,6 +64,9 @@ class Indy7IK:
 
         self._num_arm_dofs = num_arm_dofs
         self._ee_path = ee_path
+        self._link_names = link_names
+        self._link_paths = link_paths
+        self._robot_prim_path = indy7.prim_path
         self._articulation_controller = indy7.get_articulation_controller()
 
         robot_root_name = ee_path.rstrip("/").rsplit("/", 2)[-2]
@@ -67,6 +88,14 @@ class Indy7IK:
     @property
     def ee_path(self) -> str:
         return self._ee_path
+
+    def link_path(self, link_name: str) -> str:
+        """Resolve any articulation link's prim path by name (e.g. "link6")."""
+        if link_name in self._link_names:
+            index = self._link_names.index(link_name)
+            if self._link_paths is not None:
+                return str(self._link_paths[0][index])
+        return f"{self._robot_prim_path}/{link_name}"
 
     def go_to(self, position, orientation) -> bool:
         """Apply one differential IK step toward a world-frame pose.

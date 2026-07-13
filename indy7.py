@@ -27,7 +27,7 @@ INDY7_USD = os.path.join(
     "source",
     "assets",
     "indy7_v2",
-    "indy7_v2_with_robotiq_2f_140.usd",
+    "indy7_v2_with_2f-140_d455.usd",
 )
 INDY7_PRIM_PATH = "/World/indy7"
 INDY7_POSITION = [0.0, 0.0, 0.0]
@@ -51,15 +51,15 @@ YCB_CONFIG = {
     "seed": 0,
 }
 CAMERA_CONFIG = {
-    "prim_name": "zed_cam",
+    # d455 mount + rsd455.usd reference are already baked into INDY7_USD at
+    # link6/d455 — WristCamera only re-poses the mount and wraps it.
+    "prim_name": "d455",
+    "asset_root_name": "RSD455",
+    "color_camera": "Camera_OmniVision_OV9782_Color",
+    "depth_camera": "Camera_Pseudo_Depth",
     "resolution": [640, 480],
-    "mount_translation": [0.0, 0.0, 0.08],
-    "mount_orientation": [0.0, 1.0, 0.0, 0.0],
-    "mount_convention": "usd",
-    "intrinsics": {
-        "fx": 554.2562509926996,
-        "horizontal_aperture": 20.955,
-    },
+    "mount_translation": [0.06031178594972571, 0.002541999360932995, 0.03876863710717515],
+    "mount_orientation": [0.7071067811865476, 0.0, -0.7071067811865475, 0.0],
     "clipping_range": [0.01, 5.0],
     "capture_depth": True,
     "capture_every": 60,
@@ -120,10 +120,10 @@ def main() -> None:
 
     ik = Indy7IK(indy7)
     gripper = Indy7Gripper(indy7)
-    wrist_camera = WristCamera(CAMERA_CONFIG, parent_prim=ik.ee_path, workdir=ROOT_DIR)
+    wrist_camera = WristCamera(CAMERA_CONFIG, parent_prim=ik.link_path("link6"), workdir=ROOT_DIR)
     wrist_camera.initialize()
     if not args.headless:
-        wrist_camera.set_as_active_viewport_camera()
+        wrist_camera.open_secondary_viewport()
     print("[ik] Indy7IK ready")
     print_ycb_centers(ycb_paths)
 
@@ -161,7 +161,7 @@ def main() -> None:
             gripper = Indy7Gripper(indy7)
             wrist_camera.initialize()
             if not args.headless:
-                wrist_camera.set_as_active_viewport_camera()
+                wrist_camera.open_secondary_viewport()
             reset_needed = False
 
         if target_position is not None:

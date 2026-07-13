@@ -49,12 +49,12 @@ TCP가 해당 월드 pose를 PINK differential IK로 추종하고, 목표를 주
 ```bash
 ~/isaacsim/python.sh indy7.py
 ~/isaacsim/python.sh indy7.py --target-position 0.45 0.0 0.35
-~/isaacsim/python.sh indy7.py --target-position 0.45 0.0 0.35 --target-orientation 0 0 1 0
+~/isaacsim/python.sh indy7.py --target-position 0.45 0.5 0.35 --target-orientation 0 0 1 0
 ~/isaacsim/python.sh indy7.py --gripper close
 ~/isaacsim/python.sh indy7.py --headless --max-steps 240
 ```
 
-카메라는 기본으로 TCP 아래 `zed_cam` prim으로 생성되고, RGB/depth를 60스텝마다
+카메라는 기본으로 `link6/d455` 아래 RealSense D455 prim을 사용하고, RGB/depth를 60스텝마다
 `output/camera/`에 저장한다.
 
 주요 옵션:
